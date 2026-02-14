@@ -4,269 +4,225 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday</title>
-
 <style>
-*{
-  box-sizing:border-box;
-}
+    * { box-sizing: border-box; }
+    body, html {
+        margin: 0; padding: 0; width: 100%; height: 100vh;
+        background: #ffffff; overflow: hidden;
+        font-family: 'Segoe UI', sans-serif;
+        transition: background 0.8s ease; /* Nền chuyển màu mượt hơn */
+    }
 
-body{
-  margin:0;
-  background:#ffffff;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-  font-family: 'Segoe UI', sans-serif;
-}
+    body.dark-mode { background: #1a0a20; } /* Tím sẫm khi tắt đèn */
 
-/* ================= HỘP QUÀ ================= */
+    #main-canvas {
+        position: relative; width: 100%; height: 100%;
+        display: flex; justify-content: center; align-items: center;
+    }
 
-.box-container{
-  position:relative;
-  width:320px;
-  height:320px;
-  cursor:pointer;
-  transition:opacity 1s, transform 1s;
-}
+    /* ================= HỘP QUÀ ================= */
+    .box-container {
+        position: relative; width: 300px; height: 300px;
+        cursor: pointer; z-index: 100;
+        transition: opacity 0.8s, transform 0.8s;
+    }
+    .box-base, .box-lid { width: 100%; position: absolute; }
+    .box-lid { top: 0; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2; }
+    .box-base { bottom: 0; z-index: 1; }
+    .open .box-lid { transform: translateY(-180px) rotate(-15deg); }
+    .fade-out { opacity: 0; pointer-events: none; }
 
-.box-base{
-  width:100%;
-  position:absolute;
-  bottom:0;
-}
+    /* ================= VẬT PHẨM (Upscale & Closer) ================= */
+    #surprise {
+        position: absolute; display: flex;
+        justify-content: center; align-items: flex-end;
+        gap: 5px; /* Các món quà sát nhau hơn */
+        width: 100%; height: 100%;
+        pointer-events: none;
+    }
 
-.box-lid{
-  width:100%;
-  position:absolute;
-  top:0;
-  transform-origin:bottom center;
-  transition:1.2s cubic-bezier(.68,-0.6,.32,1.6);
-}
+    .item {
+        opacity: 0; transform: scale(0);
+        transition: opacity 0.8s, transform 0.8s cubic-bezier(0.17, 0.67, 0.46, 1.2);
+        cursor: pointer; pointer-events: auto;
+        position: relative;
+    }
 
-.open .box-lid{
-  transform:rotateX(-140deg) translateY(-30px);
-}
+    .ensure-root { width: 120px; margin-bottom: 100px; } /* Đã upscale */
+    .cake-container { width: 280px; margin-bottom: 80px; } /* Đã upscale */
+    .card-root { width: 150px; margin-bottom: 100px; } /* Đã upscale */
 
-.fade-out{
-  opacity:0;
-  transform:scale(0.8);
-}
+    /* ================= NẾN TRÊN BÁNH ================= */
+    .candle-wrapper {
+        position: absolute;
+        top: 10%; /* Chỉnh nến cao hay thấp so với bánh ở đây */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        cursor: pointer;
+        display: none;
+    }
+    
+    .flame {
+        width: 18px; height: 25px; background: #ff9800;
+        border-radius: 50% 50% 20% 20%;
+        margin: 0 auto; display: none;
+        box-shadow: 0 0 30px #ff5722, 0 0 60px #ff9800;
+        animation: flicker 0.2s infinite alternate;
+    }
+    
+    @keyframes flicker { 
+        from { transform: scale(1) rotate(-1deg); opacity: 0.9; } 
+        to { transform: scale(1.1) rotate(1deg); opacity: 1; } 
+    }
 
-/* ================= QUÀ ================= */
+    .candle-stick {
+        width: 8px; height: 35px; 
+        background: linear-gradient(to bottom, #fff, #ddd);
+        margin: 0 auto; border-radius: 2px;
+    }
 
-#surprise{
-  position:absolute;
-  display:flex;
-  align-items:flex-end;
-  gap:10px; /* sát nhau hơn */
-  pointer-events:none;
-}
+    /* ================= OVERLAY THIỆP (Smooth Pop-up) ================= */
+    #overlay {
+        position: fixed; inset: 0; 
+        background: rgba(20, 0, 30, 0.9);
+        display: none; justify-content: center; align-items: center;
+        z-index: 1000; opacity: 0;
+        transition: opacity 0.6s ease;
+        backdrop-filter: blur(10px);
+    }
 
-.item{
-  opacity:0;
-  transform:translateY(0) scale(0);
-  transition:1.2s cubic-bezier(.68,-0.6,.32,1.6);
-}
+    #overlay.active { opacity: 1; display: flex; }
 
-/* 3 chai Ensure */
-.ensure{
-  width:100px;
-}
+    .card-content { 
+        color: white; text-align: center; padding: 40px;
+        max-width: 600px; width: 85%;
+        transform: scale(0.7); opacity: 0;
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-/* Bánh to */
-.cake{
-  width:260px;
-  z-index:2;
-}
+    #overlay.active .card-content { transform: scale(1); opacity: 1; }
 
-/* Thiệp */
-.card{
-  width:120px;
-  cursor:pointer;
-  pointer-events:auto;
-  transition:transform 0.4s ease;
-}
+    .card-content h1 { font-size: 2.5rem; color: #ffd700; }
+    .card-content p { font-size: 1.2rem; line-height: 1.8; overflow-y: auto; max-height: 50vh; }
 
-.card:hover{
-  transform:scale(1.08);
-}
+    .spawned-ensure { position: absolute; width: 80px; z-index: 5; pointer-events: none; }
 
-/* ================= OVERLAY ================= */
-
-#overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(6px);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  opacity:0;
-  pointer-events:none;
-  transition:0.4s ease;
-}
-
-#overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* Thiệp mở ra */
-.card-content{
-  background:white;
-  padding:40px;
-  border-radius:20px;
-  max-width:500px;
-  width:85%;
-  text-align:center;
-  transform:rotateY(90deg) scale(0.8);
-  transition:0.6s ease;
-}
-
-#overlay.active .card-content{
-  transform:rotateY(0deg) scale(1);
-}
-
-.card-content h2{
-  margin-top:0;
-  font-weight:600;
-}
-
-.card-content p{
-  line-height:1.6;
-  font-size:16px;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:600px){
-
-  .box-container{
-    width:220px;
-    height:220px;
-  }
-
-  .ensure{
-    width:60px;
-  }
-
-  .cake{
-    width:150px;
-  }
-
-  .card{
-    width:70px;
-  }
-
-  .card-content{
-    padding:25px;
-  }
-}
+    @media(max-width: 600px) {
+        .cake-container { width: 180px; }
+        .ensure-root { width: 70px; }
+        .card-root { width: 90px; }
+    }
 </style>
 </head>
+<body onclick="handleGlobalClick(event)">
 
-<body>
+<div id="main-canvas">
+    <div class="box-container" id="box" onclick="openBox(event)">
+        <img src="box-lid.png" class="box-lid">
+        <img src="box-base.png" class="box-base">
+    </div>
 
-<!-- HỘP -->
-<div class="box-container" id="box">
-  <img src="images/box-base.png" class="box-base">
-  <img src="images/box-lid.png" class="box-lid">
+    <div id="surprise">
+        <img src="ensure.png" id="ensure-root" class="item ensure-root" onclick="spawnEnsure(event)">
+
+        <div id="cake-root" class="item cake-container">
+            <div class="candle-wrapper" id="candle" onclick="lightCandle(event)">
+                <div class="flame" id="flame"></div>
+                <div class="candle-stick"></div>
+            </div>
+            <img src="cake.png" style="width: 100%;">
+        </div>
+
+        <img src="card.png" id="card-root" class="item card-root" onclick="openCard(event)">
+    </div>
 </div>
 
-<!-- QUÀ -->
-<div id="surprise">
-
-  <img class="item ensure" id="e1" src="images/ensure.png">
-  <img class="item ensure" id="e2" src="images/ensure.png">
-  <img class="item ensure" id="e3" src="images/ensure.png">
-
-  <img class="item cake" id="cake" src="images/cake.png">
-
-  <img class="item card" id="card" src="images/card.png">
-
+<div id="overlay" onclick="closeCard()">
+    <div class="card-content">
+        <h1>Happy Birthday! ✨</h1>
+        <p>Chúc bạn tuổi mới luôn rạng rỡ, tràn đầy niềm vui và gặt hái được nhiều thành công trong cuộc sống!</p>
+        <p>Mong rằng mọi điều tốt đẹp nhất sẽ đến với bạn. Hãy luôn mỉm cười và hạnh phúc nhé!</p>
+        <button onclick="closeCard()" style="padding: 12px 30px; cursor: pointer; border-radius: 20px; border:none; margin-top:20px; background: gold; font-weight:bold;">Đóng</button>
+    </div>
 </div>
 
-<!-- OVERLAY -->
-<div id="overlay">
-  <div class="card-content">
-    <h2>🎂 Happy Birthday 🎂</h2>
-    <p>
-      ✨ Bạn tự chỉnh sửa nội dung ở đây ✨ <br><br>
-      Chúc bạn luôn hạnh phúc, vui vẻ và đạt được mọi điều mong muốn 💖
-    </p>
-    <p style="opacity:0.6;font-size:14px;">
-      (Chạm để đóng)
-    </p>
-  </div>
-</div>
-
-<audio id="music" src="audio/music.mp3" loop></audio>
+<audio id="music" src="music.mp3" loop></audio>
 
 <script>
-const box = document.getElementById("box");
-const music = document.getElementById("music");
+    const box = document.getElementById('box');
+    const music = document.getElementById('music');
+    const candle = document.getElementById('candle');
+    const flame = document.getElementById('flame');
+    const overlay = document.getElementById('overlay');
 
-const e1 = document.getElementById("e1");
-const e2 = document.getElementById("e2");
-const e3 = document.getElementById("e3");
-const cake = document.getElementById("cake");
-const card = document.getElementById("card");
+    function openBox(e) {
+        e.stopPropagation();
+        box.classList.add('open');
+        music.play();
+        
+        setTimeout(() => {
+            document.querySelectorAll('.item').forEach(item => {
+                item.style.opacity = "1";
+                item.style.transform = "scale(1)";
+            });
+            candle.style.display = "block";
+        }, 800);
 
-const overlay = document.getElementById("overlay");
+        setTimeout(() => box.classList.add('fade-out'), 1600);
+    }
 
-/* ===== MỞ HỘP ===== */
+    function spawnEnsure(e) {
+        e.stopPropagation();
+        const newEnsure = document.createElement('img');
+        newEnsure.src = 'ensure.png';
+        newEnsure.className = 'spawned-ensure';
+        
+        let x, y, collision;
+        let attempts = 0;
+        do {
+            collision = false;
+            x = Math.random() * (window.innerWidth - 80);
+            y = Math.random() * (window.innerHeight - 100);
+            const rects = [...document.querySelectorAll('.item, .spawned-ensure, .box-container')].map(el => el.getBoundingClientRect());
+            for (let rect of rects) {
+                if (!(x + 80 < rect.left || x > rect.right || y + 100 < rect.top || y > rect.bottom)) {
+                    collision = true; break;
+                }
+            }
+            attempts++;
+        } while (collision && attempts < 100);
 
-box.addEventListener("click", ()=>{
+        newEnsure.style.left = x + 'px';
+        newEnsure.style.top = y + 'px';
+        document.body.appendChild(newEnsure);
+    }
 
-  box.classList.add("open");
-  music.play();
+    function lightCandle(e) {
+        e.stopPropagation();
+        document.body.classList.add('dark-mode');
+        flame.style.display = 'block';
+    }
 
-  setTimeout(()=>{
+    function handleGlobalClick(e) {
+        // Tắt nến nếu đang trong chế độ tối
+        if (document.body.classList.contains('dark-mode')) {
+            document.body.classList.remove('dark-mode');
+            flame.style.display = 'none';
+        }
+    }
 
-    /* 3 chai Ensure sát bánh */
-    e1.style.opacity="1";
-    e1.style.transform="translate(-150px,-60px) scale(1)";
+    function openCard(e) {
+        e.stopPropagation();
+        overlay.style.display = 'flex';
+        // Delay một chút để hiệu ứng transition hoạt động
+        setTimeout(() => overlay.classList.add('active'), 10);
+    }
 
-    e2.style.opacity="1";
-    e2.style.transform="translate(-80px,-70px) scale(1)";
-
-    e3.style.opacity="1";
-    e3.style.transform="translate(-10px,-60px) scale(1)";
-
-    /* Bánh trung tâm */
-    cake.style.opacity="1";
-    cake.style.transform="translate(60px,-110px) scale(1)";
-
-    /* Thiệp bên phải */
-    card.style.opacity="1";
-    card.style.transform="translate(180px,-70px) scale(1)";
-
-  },1000);
-
-  setTimeout(()=>{
-    box.classList.add("fade-out");
-  },1500);
-
-  setTimeout(()=>{
-    box.style.display="none";
-  },2500);
-
-});
-
-/* ===== MỞ THIỆP ===== */
-
-card.addEventListener("click", ()=>{
-  overlay.classList.add("active");
-});
-
-/* ===== ĐÓNG THIỆP ===== */
-
-overlay.addEventListener("click", ()=>{
-  overlay.classList.remove("active");
-});
+    function closeCard() {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.style.display = 'none', 600);
+    }
 </script>
-
 </body>
 </html>
