@@ -32,6 +32,31 @@
     .open .box-lid { transform: translateY(-220px) rotate(-10deg); }
     .fade-out { opacity: 0; transform: scale(0.8); pointer-events: none; }
 
+    /*NOW PLAYING*/
+    #now-playing {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        pointer-events: none;
+        display: none; /* Chỉ hiện sau khi mở hộp quà */
+        transition: opacity 0.5s;
+        cursor: pointer; 
+        pointer-events: auto; 
+
+    }
+    #now-playing:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.05);
+    }   
+
     /* ================= QUÀ TẶNG ================= */
     #surprise {
         position: absolute; display: flex;
@@ -90,7 +115,7 @@
     }
     .candle-touch-area { position: absolute; top: -40px; bottom: -20px; left: -25px; right: -25px; z-index: 65; }
 
-    /* ================= ENSURE RANDOM ================= */
+    /*ENSURE RANDOM*/
     @keyframes popUpRandom {
         0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
         70% { transform: translate(var(--tw-x), var(--tw-y)) scale(calc(var(--tw-s) * 1.1)) rotate(var(--tw-r)); opacity: 1; }
@@ -101,7 +126,7 @@
         /* Animation được kích hoạt từ JS để nhận biến ngẫu nhiên */
     }
 
-    /* ================= THIỆP CHÚC ================= */
+    /*THIỆP CHÚC*/
     #overlay {
         position: fixed; inset: 0; background: rgba(20, 5, 30, 0.95);
         display: none; justify-content: center; align-items: center;
@@ -122,42 +147,22 @@
         .card-root { width: 90px; }
         .box-container { width: 220px; height: 220px; }
     }
-    
-    /*THIỆP CHÚC*/
-    #overlay {
-        position: fixed; inset: 0; 
-        background: rgba(18, 5, 25, 0.96);
-        display: none; justify-content: center; align-items: center;
-        z-index: 1000; opacity: 0; 
-        transition: opacity 0.8s ease;
-        backdrop-filter: blur(15px);
-    }
-    #overlay.active { opacity: 1; display: flex; }
 
-    .card-content { 
-        color: white; text-align: center; padding: 30px;
-        max-width: 600px; width: 92%; 
-        transform: scale(0.4); opacity: 0;
-        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 215, 0, 0.2);
-    }
-    #overlay.active .card-content { transform: scale(1); opacity: 1; }
-
-    /* Vùng chứa các lời chúc có thể scroll */
+    /*WISHES CONTAINER*/
     .wishes-container {
+        flex: 1;
         max-height: 65vh; /* Chiều cao tối đa của vùng lời chúc */
         overflow-y: auto;
-        padding-right: 10px;
-        margin-top: 20px;
-        text-align: left; /* Để lời chúc căn trái cho dễ đọc */
+        overflow-x: hidden;
+        padding: 10px 15px;
+        margin-top: 15px;
+        text-align: left; 
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
-    /* Tùy chỉnh thanh cuộn (scrollbar) cho đẹp */
     .wishes-container::-webkit-scrollbar { width: 4px; }
-    .wishes-container::-webkit-scrollbar-track { background: transparent; }
-    .wishes-container::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+    .wishes-container::-webkit-scrollbar-thumb { background: #E0D1B0(255, 215, 0, 0.3); border-radius: 10px; }
 
     .wish-box {
         background: rgba(255, 255, 255, 0.08);
@@ -188,6 +193,10 @@
         opacity: 0.5;
         text-align: center;
     }
+    /*ENSURE GOLD*/
+    .gold-glow {
+        filter: drop-shadow(0 0 10px rgb(255, 238, 142)) brightness(1.0);
+    }
 </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -197,7 +206,7 @@
         <img src="box-lid.png" class="box-lid">
         <img src="box-base.png" class="box-base">
     </div>
-
+    
     <div id="surprise">
         <img src="ensure.png" id="ensure-root" class="item ensure-root" onclick="spawnEnsure(event)">
         <div id="cake-root" class="item cake-container">
@@ -218,12 +227,12 @@
         
         <div class="wishes-container">
             <div class="wish-box">
-                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/Pương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết</div>
+                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/ương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết &gt;&lt;</div>
                 <span class="sender-name">— thồn lành</span>
             </div>
 
             <div class="wish-box">
-                <div class="wish-text">Tchúc tiền vào như nước sống lâu trăm tuổi đợi tui vô sg chung vui với</div>
+                <div class="wish-text">chúc tiền vào như nước sống lâu trăm tuổi đợi tui vô sg chung vui với</div>
                 <span class="sender-name">— Eli</span>
             </div>
 
@@ -246,18 +255,70 @@
                 <div class="wish-text">e vas chúc mèo béo sinh nhật vui vẻ hạnh phúc, qua tuổi mới mong mèo có được những gì tốt đẹp nhất nhất nhất. em vá mến mèo không kể sao được cho hết</div>
                 <span class="sender-name">— Vá</span>
             </div>
+
+            <div class="wish-box">
+                <div class="wish-text">placeholder</div>
+                <span class="sender-name">— Nah</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">placeholder</div>
+                <span class="sender-name">— Thong</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">placeholder</div>
+                <span class="sender-name">— Chi</span>
+            </div>
         </div>
 
-        <div class="close-hint">(Chạm vào vùng trống bên ngoài để đóng thiệp)</div>
         <button onclick="closeCard()" style="margin-top:20px; padding: 10px 25px; border-radius: 20px; border:none; background: #76DE42; font-weight:bold; cursor:pointer;">Đóng thiệp</button>
     </div>
 </div>
 
-<audio id="music" src="music.mp3" loop></audio>
+<audio id="music"></audio>
+<div id="now-playing" onclick="changeSongManual(event)">Now playing: <span id="song-name">...</span></div>
 
 <script>
+    const playlist = [
+        { name: "Home Again - Park Lane ft. LaKesha Nugent", src: "music1.mp3" },
+        { name: "Microdose - Jackson Laird", src: "music2.mp3" },
+        { name: "dog cuddles - đa sports", src: "music3.mp3" }
+    ];
+        let currentPlaylist = [];
+        let currentSongIndex = 0;
+        const music = document.getElementById('music');
+        const songNameDisplay = document.getElementById('song-name');
+        const nowPlayingDiv = document.getElementById('now-playing');
+
+        function shufflePlaylist() {
+            currentPlaylist = [...playlist].sort(() => Math.random() - 0.5);
+        }
+
+        function changeSongManual(e) {
+            if (e) e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
+            playNextSong();
+        }
+        function playNextSong() {
+            if (currentPlaylist.length === 0) return;
+            
+            if (currentSongIndex >= currentPlaylist.length) {
+                currentSongIndex = 0; 
+                shufflePlaylist();
+            }
+            const song = currentPlaylist[currentSongIndex];
+            music.src = song.src;
+            songNameDisplay.innerText = song.name;
+            music.play().catch(err => console.log("Playback error:", err));
+            currentSongIndex++;
+        }
+
+        // Lắng nghe khi bài hát kết thúc để chuyển bài
+        music.onended = function() {
+            playNextSong();
+        };
+
     const box = document.getElementById('box');
-    const music = document.getElementById('music');
     const candle = document.getElementById('candle');
     const overlay = document.getElementById('overlay');
     const surpriseItems = document.querySelectorAll('.item');
@@ -268,7 +329,9 @@
     function openBox(e) {
         e.stopPropagation();
         box.classList.add('open');
-        music.play().catch(() => {});
+        shufflePlaylist();
+        playNextSong();
+        nowPlayingDiv.style.display = 'block';
         setTimeout(() => box.classList.add('fade-out'), 1500);
         setTimeout(() => {
             surpriseItems.forEach(item => {
@@ -285,6 +348,13 @@
         const img = document.createElement('img');
         img.src = 'ensure.png';
         img.className = 'spawned-ensure';
+        const isGold = Math.random() < 0.1; // 0.1 tương ứng 10%
+        if (isGold) {
+            img.src = 'ensure_gold.png';
+            img.classList.add('gold-glow');
+        } else {
+            img.src = 'ensure.png';
+        }
         
         // Tạo các giá trị ngẫu nhiên
         const randomRotate = Math.floor(Math.random() * 80 - 40); // Nghiêng từ -40 đến 40 độ
@@ -292,14 +362,12 @@
         
         let x, y, collision;
         let attempts = 0;
-        const padding = 20; // Khoảng cách an toàn giữa các vật
-
+        const padding = 20; 
         do {
             collision = false;
             x = Math.random() * (window.innerWidth - 100);
             y = Math.random() * (window.innerHeight - 120);
             
-            // Check va chạm
             const rects = [...document.querySelectorAll('.item, .spawned-ensure, .box-container')].map(el => el.getBoundingClientRect());
             for (let rect of rects) {
                 if (!(x + 80 + padding < rect.left || x - padding > rect.right || 
@@ -311,7 +379,6 @@
             attempts++;
         } while (collision && attempts < 150);
 
-        // Gán vị trí và biến ngẫu nhiên vào CSS variables
         img.style.left = x + 'px';
         img.style.top = y + 'px';
         img.style.setProperty('--tw-r', randomRotate + 'deg');
