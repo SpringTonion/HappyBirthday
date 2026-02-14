@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#ffffff;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ================= HỘP QUÀ ================= */
+
+.box-container{
+  position:relative;
+  width:320px;
+  height:320px;
+  cursor:pointer;
+  transition:opacity 1s, transform 1s;
+}
+
+.box-base{
+  width:100%;
+  position:absolute;
+  bottom:0;
+}
+
+.box-lid{
+  width:100%;
+  position:absolute;
+  top:0;
+  transform-origin:bottom center;
+  transition:1.2s cubic-bezier(.68,-0.6,.32,1.6);
+}
+
+.open .box-lid{
+  transform:rotateX(-140deg) translateY(-30px);
+}
+
+.fade-out{
+  opacity:0;
+  transform:scale(0.8);
+}
+
+/* ================= QUÀ ================= */
+
+#surprise{
+  position:absolute;
+  display:flex;
+  align-items:flex-end;
+  gap:10px; /* sát nhau hơn */
+  pointer-events:none;
+}
+
+.item{
+  opacity:0;
+  transform:translateY(0) scale(0);
+  transition:1.2s cubic-bezier(.68,-0.6,.32,1.6);
+}
+
+/* 3 chai Ensure */
+.ensure{
+  width:100px;
+}
+
+/* Bánh to */
+.cake{
+  width:260px;
+  z-index:2;
+}
+
+/* Thiệp */
+.card{
+  width:120px;
+  cursor:pointer;
+  pointer-events:auto;
+  transition:transform 0.4s ease;
+}
+
+.card:hover{
+  transform:scale(1.08);
+}
+
+/* ================= OVERLAY ================= */
+
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(6px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:0.4s ease;
+}
+
+#overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* Thiệp mở ra */
+.card-content{
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  max-width:500px;
+  width:85%;
+  text-align:center;
+  transform:rotateY(90deg) scale(0.8);
+  transition:0.6s ease;
+}
+
+#overlay.active .card-content{
+  transform:rotateY(0deg) scale(1);
+}
+
+.card-content h2{
+  margin-top:0;
+  font-weight:600;
+}
+
+.card-content p{
+  line-height:1.6;
+  font-size:16px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+  .box-container{
+    width:220px;
+    height:220px;
+  }
+
+  .ensure{
+    width:60px;
+  }
+
+  .cake{
+    width:150px;
+  }
+
+  .card{
+    width:70px;
+  }
+
+  .card-content{
+    padding:25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HỘP -->
+<div class="box-container" id="box">
+  <img src="images/box-base.png" class="box-base">
+  <img src="images/box-lid.png" class="box-lid">
+</div>
+
+<!-- QUÀ -->
+<div id="surprise">
+
+  <img class="item ensure" id="e1" src="images/ensure.png">
+  <img class="item ensure" id="e2" src="images/ensure.png">
+  <img class="item ensure" id="e3" src="images/ensure.png">
+
+  <img class="item cake" id="cake" src="images/cake.png">
+
+  <img class="item card" id="card" src="images/card.png">
+
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="card-content">
+    <h2>🎂 Happy Birthday 🎂</h2>
+    <p>
+      ✨ Bạn tự chỉnh sửa nội dung ở đây ✨ <br><br>
+      Chúc bạn luôn hạnh phúc, vui vẻ và đạt được mọi điều mong muốn 💖
+    </p>
+    <p style="opacity:0.6;font-size:14px;">
+      (Chạm để đóng)
+    </p>
+  </div>
+</div>
+
+<audio id="music" src="audio/music.mp3" loop></audio>
+
+<script>
+const box = document.getElementById("box");
+const music = document.getElementById("music");
+
+const e1 = document.getElementById("e1");
+const e2 = document.getElementById("e2");
+const e3 = document.getElementById("e3");
+const cake = document.getElementById("cake");
+const card = document.getElementById("card");
+
+const overlay = document.getElementById("overlay");
+
+/* ===== MỞ HỘP ===== */
+
+box.addEventListener("click", ()=>{
+
+  box.classList.add("open");
+  music.play();
+
+  setTimeout(()=>{
+
+    /* 3 chai Ensure sát bánh */
+    e1.style.opacity="1";
+    e1.style.transform="translate(-150px,-60px) scale(1)";
+
+    e2.style.opacity="1";
+    e2.style.transform="translate(-80px,-70px) scale(1)";
+
+    e3.style.opacity="1";
+    e3.style.transform="translate(-10px,-60px) scale(1)";
+
+    /* Bánh trung tâm */
+    cake.style.opacity="1";
+    cake.style.transform="translate(60px,-110px) scale(1)";
+
+    /* Thiệp bên phải */
+    card.style.opacity="1";
+    card.style.transform="translate(180px,-70px) scale(1)";
+
+  },1000);
+
+  setTimeout(()=>{
+    box.classList.add("fade-out");
+  },1500);
+
+  setTimeout(()=>{
+    box.style.display="none";
+  },2500);
+
+});
+
+/* ===== MỞ THIỆP ===== */
+
+card.addEventListener("click", ()=>{
+  overlay.classList.add("active");
+});
+
+/* ===== ĐÓNG THIỆP ===== */
+
+overlay.addEventListener("click", ()=>{
+  overlay.classList.remove("active");
+});
+</script>
+
+</body>
+</html>
