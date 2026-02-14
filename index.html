@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday</title>
+<title>Happy Birthday✨</title>
 <style>
     * { box-sizing: border-box; }
     body, html {
@@ -13,7 +13,7 @@
         transition: background 0.8s ease;
     }
 
-    body.dark-mode { background: #1a0a20; }
+    body.dark-mode { background: #2D0341; }
 
     #main-canvas {
         position: relative; width: 100%; height: 100%;
@@ -22,138 +22,171 @@
 
     /* ================= HỘP QUÀ ================= */
     .box-container {
-        position: absolute; width: 300px; height: 300px;
+        position: absolute; width: 280px; height: 280px;
         cursor: pointer; z-index: 100;
         transition: opacity 1s ease, transform 1s ease;
     }
-    .box-base, .box-lid { width: 100%; position: absolute; }
+    .box-base, .box-lid { width: 100%; position: absolute; left: 0; }
     .box-lid { top: 15px; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2; }
     .box-base { bottom: 0; z-index: 1; }
-    .open .box-lid { transform: translateY(-200px) rotate(-15deg); }
+    .open .box-lid { transform: translateY(-220px) rotate(-10deg); }
     .fade-out { opacity: 0; transform: scale(0.8); pointer-events: none; }
 
-    /* ================= CỤM QUÀ TRUNG TÂM ================= */
+    /* ================= QUÀ TẶNG ================= */
     #surprise {
-        position: absolute; 
-        display: flex;
-        justify-content: center;
-        align-items: flex-end; /* Căn chân các món quà bằng nhau */
-        gap: 10px;
-        z-index: 50;
-        pointer-events: none;
+        position: absolute; display: flex;
+        justify-content: center; align-items: flex-end;
+        gap: 15px; z-index: 50; pointer-events: none;
     }
 
     .item {
-        opacity: 0; 
-        transform: scale(0) translateY(50px);
+        opacity: 0; transform: scale(0) translateY(50px);
         transition: opacity 1s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        cursor: pointer; 
-        pointer-events: auto;
+        cursor: pointer; pointer-events: auto;
     }
 
-    .ensure-root { width: 130px; }
-    .cake-container { width: 300px; position: relative; }
-    .card-root { width: 160px; }
-    
-    /* Animation cho chai Ensure mới */
-    @keyframes popUp {
-        0% {
-            transform: scale(0);
-            opacity: 0;
-        }
-        60% {
-            transform: scale(1.2); /* Phóng to hơn một chút để tạo hiệu ứng nảy */
-            opacity: 1;
-        }
-        100% {
-            transform: scale(1); /* Trở về kích thước chuẩn */
-            opacity: 1;
-        }
-    }
+    .ensure-root { width: 180px; margin-bottom: 30px; }
+    .cake-container { width: 280px; position: relative; display: flex; justify-content: center; }
+    .card-root { width: 200px; margin-bottom: 30px; }
 
-    .spawned-ensure {
-        position: absolute;
-        width: 85px;
-        z-index: 5;
-        pointer-events: none;
-        /* Gắn animation vào đây */
-        animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    /* ================= NẾN ĐÈ LÊN BÁNH ================= */
+    /* ================= NẾN & LỬA ================= */
     .candle-wrapper {
         position: absolute;
-        /* Vị trí nến trên bánh - chỉnh top để cao/thấp */
-        top: 15%;  
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 5;
-        cursor: pointer;
-        display: none;
-        
-        /* TĂNG VÙNG BẤM: Thêm khoảng đệm vô hình xung quanh nến */
-        padding: 20px; 
-        /* width/height này bao quát cả nến và vùng xung quanh */
+        bottom: 65%; left: 50%; transform: translateX(-50%);
+        width: 15%; z-index: 60; cursor: pointer; display: none;
     }
-
-    .candle-stick {
-        width: 8px; 
-        height: 40px; 
-        z-index: 6;
-        background: linear-gradient(to bottom, #f1a6c9, #fa9cf2);
-        margin: 0 auto; 
-        border-radius: 2px;
-        position: relative; /* Làm mốc cho ngọn lửa */
-    }
-
-    .flame {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        top: 0px; 
-        z-index: 10; 
-        width: 20px; 
-        height: 28px; 
-        background: #ff9800;
-        border-radius: 50% 50% 20% 20%;
-        display: none;
-        box-shadow: 0 0 25px #ff5722, 0 0 50px #ff9800;
+    .candle-img { width: 100%; height: auto; position: relative; z-index: 61; }
+    .flame-img {
+        position: absolute; left: 50%; transform: translateX(-50%);
+        bottom: 80%; width: 110%; height: auto; z-index: 62; 
+        display: none; filter: drop-shadow(0 0 15px #ff9800);
         animation: flicker 0.2s infinite alternate;
     }
-
+    body.dark-mode .flame-img, body.dark-mode .candle-glow { display: block !important; }
     @keyframes flicker { 
-        from { transform: translateX(-50%) scale(1) rotate(-1deg); } 
-        to { transform: translateX(-50%) scale(1.1) rotate(1deg); } 
+        from { transform: translateX(-50%) scale(1); } 
+        to { transform: translateX(-50%) scale(1.1); } 
+    }
+    .candle-glow {
+        position: absolute;
+        bottom: 100%; 
+        left: 50%; 
+        transform: translate(-50%, 50%);
+        
+        /* Đảm bảo hình vuông tuyệt đối trước khi bo tròn */
+        width: 300px; 
+        height: 300px; 
+        
+        /* Tạo hình tròn và làm nhòe rìa */
+        background: radial-gradient(circle, rgba(255,165,0,0.5) 0%, rgba(255,165,0,0) 70%);
+        border-radius: 50%; /* Quan trọng nhất để không bị vuông */
+        
+        /* Tăng độ ảo diệu */
+        filter: blur(15px); 
+        
+        z-index: 59; 
+        display: none;
+        pointer-events: none; /* Tránh cản trở việc click vào nến */
+    }
+    .candle-touch-area { position: absolute; top: -40px; bottom: -20px; left: -25px; right: -25px; z-index: 65; }
+
+    /* ================= ENSURE RANDOM ================= */
+    @keyframes popUpRandom {
+        0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+        70% { transform: translate(var(--tw-x), var(--tw-y)) scale(calc(var(--tw-s) * 1.1)) rotate(var(--tw-r)); opacity: 1; }
+        100% { transform: translate(var(--tw-x), var(--tw-y)) scale(var(--tw-s)) rotate(var(--tw-r)); opacity: 1; }
+    }
+    .spawned-ensure {
+        position: absolute; width: 80px; z-index: 5; pointer-events: none;
+        /* Animation được kích hoạt từ JS để nhận biến ngẫu nhiên */
     }
 
-    /* ================= OVERLAY THIỆP ================= */
+    /* ================= THIỆP CHÚC ================= */
+    #overlay {
+        position: fixed; inset: 0; background: rgba(20, 5, 30, 0.95);
+        display: none; justify-content: center; align-items: center;
+        z-index: 1000; opacity: 0; transition: opacity 0.8s ease;
+        backdrop-filter: blur(15px);
+    }
+    #overlay.active { opacity: 1; display: flex; }
+    .card-content { 
+        color: white; text-align: center; padding: 40px;
+        max-width: 650px; width: 90%; transform: scale(0.5); opacity: 0;
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #overlay.active .card-content { transform: scale(1); opacity: 1; }
+
+    @media(max-width: 600px) {
+        .cake-container { width: 180px; }
+        .ensure-root { width: 80px; }
+        .card-root { width: 90px; }
+        .box-container { width: 220px; height: 220px; }
+    }
+    
+    /*THIỆP CHÚC*/
     #overlay {
         position: fixed; inset: 0; 
-        background: rgba(15, 0, 25, 0.95);
+        background: rgba(18, 5, 25, 0.96);
         display: none; justify-content: center; align-items: center;
-        z-index: 1000; opacity: 0;
+        z-index: 1000; opacity: 0; 
         transition: opacity 0.8s ease;
         backdrop-filter: blur(15px);
     }
-
     #overlay.active { opacity: 1; display: flex; }
 
     .card-content { 
-        color: white; text-align: center; padding: 40px;
-        max-width: 650px; width: 90%;
-        transform: scale(0.5); opacity: 0;
+        color: white; text-align: center; padding: 30px;
+        max-width: 600px; width: 92%; 
+        transform: scale(0.4); opacity: 0;
         transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 215, 0, 0.2);
     }
-
     #overlay.active .card-content { transform: scale(1); opacity: 1; }
 
-    .spawned-ensure { position: absolute; width: 85px; z-index: 5; pointer-events: none; }
+    /* Vùng chứa các lời chúc có thể scroll */
+    .wishes-container {
+        max-height: 65vh; /* Chiều cao tối đa của vùng lời chúc */
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 20px;
+        text-align: left; /* Để lời chúc căn trái cho dễ đọc */
+    }
 
-    @media(max-width: 600px) {
-        .cake-container { width: 160px; }
-        .ensure-root { width: 75px; }
-        .card-root { width: 85px; }
-        .box-container { width: 220px; height: 220px; }
+    /* Tùy chỉnh thanh cuộn (scrollbar) cho đẹp */
+    .wishes-container::-webkit-scrollbar { width: 4px; }
+    .wishes-container::-webkit-scrollbar-track { background: transparent; }
+    .wishes-container::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+
+    .wish-box {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #76de42;
+    }
+
+    .wish-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 10px;
+        color: #f0f0f0;
+    }
+
+    .sender-name {
+        text-align: right;
+        font-weight: bold;
+        color: #76de42;
+        font-style: italic;
+        display: block;
+    }
+
+    .close-hint {
+        margin-top: 20px;
+        font-size: 0.9rem;
+        opacity: 0.5;
+        text-align: center;
     }
 </style>
 </head>
@@ -167,24 +200,56 @@
 
     <div id="surprise">
         <img src="ensure.png" id="ensure-root" class="item ensure-root" onclick="spawnEnsure(event)">
-
         <div id="cake-root" class="item cake-container">
             <div class="candle-wrapper" id="candle" onclick="lightCandle(event)">
-                <div class="flame" id="flame"></div>
-                <div class="candle-stick"></div>
+                <div class="candle-touch-area"></div>
+                <img src="flame.png" class="flame-img">
+                <div class="candle-glow"></div>
+                <img src="candle.png" class="candle-img">
             </div>
             <img src="cake.png" style="width: 100%;">
         </div>
-
         <img src="card.png" id="card-root" class="item card-root" onclick="openCard(event)">
     </div>
 </div>
 
 <div id="overlay" onclick="closeCard()">
-    <div class="card-content">
-        <h1 style="color: gold; font-size: 3rem;">Happy Birthday!</h1>
-        <p style="font-size: 1.3rem; line-height: 1.8;">snvvnghen chúc tiền vào như nước sống lâu trăm tuổi đợi tui vô sg chung vui với</p>
-        <p style="font-size: 1.1rem; opacity: 0.8;">(Đóng)</p>
+    <div class="card-content" onclick="event.stopPropagation()"> <h1 style="color: #76DE42; font-size: 2.2rem; margin-bottom: 10px;">Happy Birthday</h1>
+        
+        <div class="wishes-container">
+            <div class="wish-box">
+                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/Pương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết</div>
+                <span class="sender-name">— thồn lành</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">Tchúc tiền vào như nước sống lâu trăm tuổi đợi tui vô sg chung vui với</div>
+                <span class="sender-name">— Eli</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">tui chúc P sinh nhật tuổi mới hạnh phúc và đời gặp nhiều thuận lợi nka</div>
+                <span class="sender-name">— PTN</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">Chúc em bé hay ăn chóng lớn ăn khỏe sống lâu chim to bất tử</div>
+                <span class="sender-name">— Linh/Pu</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">Chúc mèo sinh nhật thật EliLuchi :3 Chúc bố mèo sớm hồi sinh gia tộc</div>
+                <span class="sender-name">— cnhs</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">e vas chúc mèo béo sinh nhật vui vẻ hạnh phúc, qua tuổi mới mong mèo có được những gì tốt đẹp nhất nhất nhất. em vá mến mèo không kể sao được cho hết</div>
+                <span class="sender-name">— Vá</span>
+            </div>
+        </div>
+
+        <div class="close-hint">(Chạm vào vùng trống bên ngoài để đóng thiệp)</div>
+        <button onclick="closeCard()" style="margin-top:20px; padding: 10px 25px; border-radius: 20px; border:none; background: #76DE42; font-weight:bold; cursor:pointer;">Đóng thiệp</button>
     </div>
 </div>
 
@@ -194,21 +259,17 @@
     const box = document.getElementById('box');
     const music = document.getElementById('music');
     const candle = document.getElementById('candle');
-    const flame = document.getElementById('flame');
     const overlay = document.getElementById('overlay');
     const surpriseItems = document.querySelectorAll('.item');
+    
+    let isCardOpen = false; // Biến khóa để fix lỗi bấm thư nhanh
+    let exitLock = false;
 
     function openBox(e) {
         e.stopPropagation();
         box.classList.add('open');
-        music.play();
-        
-        // 1. Sau 1.5 giây, bắt đầu cho hộp quà biến mất
-        setTimeout(() => {
-            box.classList.add('fade-out');
-        }, 1500);
-
-        // 2. Ngay khi hộp quà bắt đầu mờ (1.5s - 1.8s), cho các món quà xuất hiện
+        music.play().catch(() => {});
+        setTimeout(() => box.classList.add('fade-out'), 1500);
         setTimeout(() => {
             surpriseItems.forEach(item => {
                 item.style.opacity = "1";
@@ -216,71 +277,80 @@
             });
             candle.style.display = "block";
         }, 1800); 
-
-        // 3. Xóa hẳn hộp quà sau khi mờ xong
-        setTimeout(() => {
-            box.style.display = "none";
-        }, 3000);
+        setTimeout(() => box.style.display = "none", 3000);
     }
 
     function spawnEnsure(e) {
         e.stopPropagation();
-        const newEnsure = document.createElement('img');
-        newEnsure.src = 'ensure.png';
-        newEnsure.className = 'spawned-ensure';
+        const img = document.createElement('img');
+        img.src = 'ensure.png';
+        img.className = 'spawned-ensure';
+        
+        // Tạo các giá trị ngẫu nhiên
+        const randomRotate = Math.floor(Math.random() * 80 - 40); // Nghiêng từ -40 đến 40 độ
+        const randomScale = (Math.random() * 0.6 + 0.7).toFixed(2); // Cỡ từ 0.7 đến 1.3
         
         let x, y, collision;
         let attempts = 0;
-        
-        // Thuật toán tìm vị trí trống
+        const padding = 20; // Khoảng cách an toàn giữa các vật
+
         do {
             collision = false;
-            // Giới hạn x, y trong phạm vi màn hình để không bị scrollbar
             x = Math.random() * (window.innerWidth - 100);
             y = Math.random() * (window.innerHeight - 120);
             
-            // Kiểm tra va chạm với các vật phẩm chính và các chai đã sinh ra
-            const rects = [...document.querySelectorAll('.item, .spawned-ensure')].map(el => el.getBoundingClientRect());
+            // Check va chạm
+            const rects = [...document.querySelectorAll('.item, .spawned-ensure, .box-container')].map(el => el.getBoundingClientRect());
             for (let rect of rects) {
-                // Kiểm tra xem vị trí mới (x, y) có đè lên rect cũ không
-                if (!(x + 85 < rect.left || x > rect.right || y + 110 < rect.top || y > rect.bottom)) {
-                    collision = true;
+                if (!(x + 80 + padding < rect.left || x - padding > rect.right || 
+                      y + 110 + padding < rect.top || y - padding > rect.bottom)) {
+                    collision = true; 
                     break;
                 }
             }
             attempts++;
-        } while (collision && attempts < 100);
+        } while (collision && attempts < 150);
 
-        newEnsure.style.left = x + 'px';
-        newEnsure.style.top = y + 'px';
+        // Gán vị trí và biến ngẫu nhiên vào CSS variables
+        img.style.left = x + 'px';
+        img.style.top = y + 'px';
+        img.style.setProperty('--tw-r', randomRotate + 'deg');
+        img.style.setProperty('--tw-s', randomScale);
+        img.style.setProperty('--tw-x', '0px');
+        img.style.setProperty('--tw-y', '0px');
         
-        document.body.appendChild(newEnsure);
-    }   
+        img.style.animation = "popUpRandom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards";
+        
+        document.body.appendChild(img);
+    }
 
     function lightCandle(e) {
         e.stopPropagation();
         document.body.classList.add('dark-mode');
-        flame.style.display = 'block';
     }
 
     function handleGlobalClick(e) {
         if (document.body.classList.contains('dark-mode')) {
             document.body.classList.remove('dark-mode');
-            flame.style.display = 'none';
         }
     }
 
     function openCard(e) {
+        if (isCardOpen) return; // Nếu đang mở thì không làm gì cả
         e.stopPropagation();
+        isCardOpen = true;
         overlay.style.display = 'flex';
         setTimeout(() => overlay.classList.add('active'), 50);
     }
 
     function closeCard() {
+        if (exitLock) return;
         overlay.classList.remove('active');
-        setTimeout(() => overlay.style.display = 'none', 800);
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            isCardOpen = false; // Mở khóa sau khi thiệp đã ẩn hoàn toàn
+        }, 800);
     }
 </script>
 </body>
 </html>
-
