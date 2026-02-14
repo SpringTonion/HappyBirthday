@@ -20,7 +20,7 @@
         display: flex; justify-content: center; align-items: center;
     }
 
-    /* ================= HỘP QUÀ ================= */
+    /*GIFT BOX*/
     .box-container {
         position: absolute; width: 280px; height: 280px;
         cursor: pointer; z-index: 100;
@@ -46,18 +46,31 @@
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         pointer-events: none;
-        display: none; /* Chỉ hiện sau khi mở hộp quà */
+        display: none;
         transition: opacity 0.5s;
         cursor: pointer; 
         pointer-events: auto; 
-
+        transition: 0.3s ease;
+        user-select: none;
     }
+
     #now-playing:hover {
     background: rgba(0, 0, 0, 0.6);
     transform: scale(1.05);
     }   
 
-    /* ================= QUÀ TẶNG ================= */
+    #mute-btn {
+    position: fixed; top: 15px; right: 15px; z-index: 1000;
+    background: rgba(0, 0, 0, 0.5); color: white;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: none; justify-content: center; align-items: center;
+    cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s;
+    }
+
+    #mute-btn:hover { transform: scale(1.1); background: rgba(0, 0, 0, 0.7); }
+
     #surprise {
         position: absolute; display: flex;
         justify-content: center; align-items: flex-end;
@@ -74,7 +87,7 @@
     .cake-container { width: 280px; position: relative; display: flex; justify-content: center; }
     .card-root { width: 200px; margin-bottom: 30px; }
 
-    /* ================= NẾN & LỬA ================= */
+    /*CANDLE*/
     .candle-wrapper {
         position: absolute;
         bottom: 65%; left: 50%; transform: translateX(-50%);
@@ -97,21 +110,14 @@
         bottom: 100%; 
         left: 50%; 
         transform: translate(-50%, 50%);
-        
-        /* Đảm bảo hình vuông tuyệt đối trước khi bo tròn */
         width: 300px; 
         height: 300px; 
-        
-        /* Tạo hình tròn và làm nhòe rìa */
         background: radial-gradient(circle, rgba(255,165,0,0.5) 0%, rgba(255,165,0,0) 70%);
-        border-radius: 50%; /* Quan trọng nhất để không bị vuông */
-        
-        /* Tăng độ ảo diệu */
+        border-radius: 50%; 
         filter: blur(15px); 
-        
         z-index: 59; 
         display: none;
-        pointer-events: none; /* Tránh cản trở việc click vào nến */
+        pointer-events: none; 
     }
     .candle-touch-area { position: absolute; top: -40px; bottom: -20px; left: -25px; right: -25px; z-index: 65; }
 
@@ -123,7 +129,6 @@
     }
     .spawned-ensure {
         position: absolute; width: 80px; z-index: 5; pointer-events: none;
-        /* Animation được kích hoạt từ JS để nhận biến ngẫu nhiên */
     }
 
     /*THIỆP CHÚC*/
@@ -151,7 +156,7 @@
     /*WISHES CONTAINER*/
     .wishes-container {
         flex: 1;
-        max-height: 65vh; /* Chiều cao tối đa của vùng lời chúc */
+        max-height: 65vh;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 10px 15px;
@@ -227,7 +232,7 @@
         
         <div class="wishes-container">
             <div class="wish-box">
-                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/ Pương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết &gt;&lt;</div>
+                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/ương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết &gt;&lt;</div>
                 <span class="sender-name">— thồn lành</span>
             </div>
 
@@ -276,6 +281,8 @@
     </div>
 </div>
 
+<div id="mute-btn" onclick="toggleMute(event)">🔊</div>
+<audio id="ensure-sound" src="click_sound.mp3"></audio> 
 <audio id="music"></audio>
 <div id="now-playing" onclick="changeSongManual(event)">Now playing: <span id="song-name">...</span></div>
 
@@ -283,55 +290,74 @@
     const playlist = [
         { name: "Home Again - Park Lane ft. LaKesha Nugent", src: "music1.mp3" },
         { name: "Microdose - Jackson Laird", src: "music2.mp3" },
-        { name: "dog cuddles - đa sports", src: "music3.mp3" }
+        { name: "dog cuddles - dad sports", src: "music3.mp3" },
+        { name: "For You - Troy Javelona", src: "music4.mp3" },
+        { name: "Killer Tune Kills Me - KIRINJI ft. YonYon", src: "music5.mp3" },
+        { name: "I WANTED YOU TO FEEL IT - phendste", src: "music6.mp3" },
     ];
         let currentPlaylist = [];
         let currentSongIndex = 0;
+        let lastPlayedSrc = "";
         const music = document.getElementById('music');
-        const songNameDisplay = document.getElementById('song-name');
+        const muteBtn = document.getElementById('mute-btn');
         const nowPlayingDiv = document.getElementById('now-playing');
 
         function shufflePlaylist() {
-            currentPlaylist = [...playlist].sort(() => Math.random() - 0.5);
+            let newShuffle;
+            do {
+                newShuffle = [...playlist].sort(() => Math.random() - 0.5);
+            } while (newShuffle.length > 1 && newShuffle[0].src === lastPlayedSrc);
+            currentPlaylist = newShuffle;
         }
 
-        function changeSongManual(e) {
-            if (e) e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-            playNextSong();
-        }
         function playNextSong() {
             if (currentPlaylist.length === 0) return;
-            
+
             if (currentSongIndex >= currentPlaylist.length) {
-                currentSongIndex = 0; 
+                currentSongIndex = 0;
                 shufflePlaylist();
             }
             const song = currentPlaylist[currentSongIndex];
+            lastPlayedSrc = song.src; // Cập nhật bài vừa chơi
             music.src = song.src;
-            songNameDisplay.innerText = song.name;
-            music.play().catch(err => console.log("Playback error:", err));
+            document.getElementById('song-name').innerText = song.name;
+            music.play().catch(() => {});
             currentSongIndex++;
         }
 
-        // Lắng nghe khi bài hát kết thúc để chuyển bài
-        music.onended = function() {
+        function changeSongManual(e) {
+            if (e) e.stopPropagation(); 
             playNextSong();
-        };
+        }
+
+        function toggleMute(e) {
+            if (e) e.stopPropagation();
+            music.muted = !music.muted;
+            document.getElementById('ensure-sound').muted = music.muted;
+            muteBtn.innerText = music.muted ? "🔇" : "🔊";
+        }
+
+        music.onended = playNextSong;
 
     const box = document.getElementById('box');
     const candle = document.getElementById('candle');
     const overlay = document.getElementById('overlay');
     const surpriseItems = document.querySelectorAll('.item');
     
-    let isCardOpen = false; // Biến khóa để fix lỗi bấm thư nhanh
+    let isCardOpen = false;
     let exitLock = false;
-
+    let isBoxOpened = false;
     function openBox(e) {
+        if (isBoxOpened) return;
         e.stopPropagation();
+        isBoxOpened = true;
         box.classList.add('open');
         shufflePlaylist();
         playNextSong();
+ 
         nowPlayingDiv.style.display = 'block';
+        muteBtn.style.display = 'flex';
+
         setTimeout(() => box.classList.add('fade-out'), 1500);
         setTimeout(() => {
             surpriseItems.forEach(item => {
@@ -345,10 +371,13 @@
 
     function spawnEnsure(e) {
         e.stopPropagation();
+        const sound = document.getElementById('ensure-sound');
+        sound.currentTime = 0; 
+        sound.play();
         const img = document.createElement('img');
         img.src = 'ensure.png';
         img.className = 'spawned-ensure';
-        const isGold = Math.random() < 0.1; // 0.1 tương ứng 10%
+        const isGold = Math.random() < 0.05; 
         if (isGold) {
             img.src = 'ensure_gold.png';
             img.classList.add('gold-glow');
@@ -356,9 +385,8 @@
             img.src = 'ensure.png';
         }
         
-        // Tạo các giá trị ngẫu nhiên
-        const randomRotate = Math.floor(Math.random() * 80 - 40); // Nghiêng từ -40 đến 40 độ
-        const randomScale = (Math.random() * 0.6 + 0.7).toFixed(2); // Cỡ từ 0.7 đến 1.3
+        const randomRotate = Math.floor(Math.random() * 80 - 40); 
+        const randomScale = (Math.random() * 0.6 + 0.7).toFixed(2); 
         
         let x, y, collision;
         let attempts = 0;
@@ -403,7 +431,7 @@
     }
 
     function openCard(e) {
-        if (isCardOpen) return; // Nếu đang mở thì không làm gì cả
+        if (isCardOpen) return; 
         e.stopPropagation();
         isCardOpen = true;
         overlay.style.display = 'flex';
@@ -415,7 +443,7 @@
         overlay.classList.remove('active');
         setTimeout(() => {
             overlay.style.display = 'none';
-            isCardOpen = false; // Mở khóa sau khi thiệp đã ẩn hoàn toàn
+            isCardOpen = false; 
         }, 800);
     }
 </script>
