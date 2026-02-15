@@ -34,14 +34,8 @@
 
     /*NOW PLAYING*/
     #now-playing {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 1000;
-        background: rgba(0, 0, 0, 0.4);
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
+        position: fixed; top: 15px; left: 15px; z-index: 1000; background: rgba(0, 0, 0, 0.4); color: white;
+        padding: 8px 15px; border-radius: 20px;
         font-size: 14px;
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -52,14 +46,26 @@
         pointer-events: auto; 
         transition: 0.3s ease;
         user-select: none;
-        max-width: calc(100% - 80px); 
+        max-width: 350px; 
         overflow: hidden;
         white-space: nowrap;
     }
 
+    .music-info-container {
+        display: flex;
+        overflow: hidden;
+        width: 100%;
+        margin-left: 5px;
+    }
+
+    .music-info-container.is-scrolling {
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
     #song-name {
         display: inline-block;
-        padding-left: 20px;
+        will-change: transform;
     }
 
     #now-playing:hover {
@@ -68,12 +74,14 @@
     }   
 
     .marquee {
-        animation: marquee 8s linear infinite;
+        display: inline-block;
+        animation: marquee 12s linear infinite;
+        padding-right: 67px;
     }
 
     @keyframes marquee {
         0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
+        100% { transform: translateX(-50%); }
     }
 
     #mute-btn {
@@ -338,6 +346,15 @@
                 <span class="sender-name">— Tuộc</span>
             </div>
 
+            <div class="wish-box">
+                <div class="wish-text">Chúc p tuổi mới mãi đẹp, mãi vui. Gặp nhiều người tốt, đẹp tính, khiến p vui vẻ hơn. Buôn bán đắt như tôm, tranh vẽ luôn amazing.</div>
+                <span class="sender-name">— Ngô</span>
+            </div>
+
+            <div class="wish-box">
+                <div class="wish-text">Chúc Mèo sinh nhật vui vẻ, hãy thoải mái làm điều mình thích, chúc m mau vượt qua được những khó khăn trong cuộc sống. Anh em bạn bè luôn ở bên m, yêu thương và ủng hộ m 🫶</div>
+                <span class="sender-name">— Moshii</span>
+            </div>
         </div>
 
             <div class="tap-to-close" onclick="closeCard()">(Tap anywhere else to close)</div>    
@@ -347,7 +364,10 @@
 <div id="mute-btn" onclick="toggleMute(event)">🔊</div>
 <audio id="ensure-sound" src="click_sound.mp3"></audio> 
 <audio id="music"></audio>
-<div id="now-playing" onclick="changeSongManual(event)">Now playing: <span id="song-name">...</span></div>
+<div id="now-playing" onclick="changeSongManual(event)"><span style="white-space: nowrap; flex-shrink: 0; opacity: 0.8;">Now playing:</span><div class="music-info-container">
+        <span id="song-name">...</span>
+    </div>
+</div>
 
 <script>
     const playlist = [
@@ -365,6 +385,7 @@
         const muteBtn = document.getElementById('mute-btn');
         const nowPlayingDiv = document.getElementById('now-playing');
         const nameEl = document.getElementById('song-name');
+        const infoContainer = document.querySelector('.music-info-container');
 
         function shufflePlaylist() {
             let newShuffle;
@@ -388,13 +409,19 @@
             
             nameEl.innerText = song.name;
             nameEl.classList.remove('marquee');
+            infoContainer.classList.remove('is-scrolling');
+            nameEl.style.animation = "none"; 
+            nameEl.style.transform = "translateX(0)";
             setTimeout(() => {
-                if (nameEl.offsetWidth > (nowPlayingDiv.offsetWidth - 30)) {
-                    nameEl.innerText = song.name + "   |   " + song.name + "   |   ";
-                    nameEl.classList.add('marquee');
+                if (nameEl.offsetWidth > infoContainer.offsetWidth) {
+                    nameEl.innerText = song.name + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0" + song.name + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
+                    setTimeout(() => {
+                        nameEl.classList.add('spotify-marquee');
+                        infoContainer.classList.add('is-scrolling');
+                        nameEl.style.animation = "marquee 12s linear infinite";
+                    }, 3000); 
                 }
-            }, 100);
-
+            }, 200);
             music.play().catch(() => {});
             currentSongIndex++;
         }
@@ -430,7 +457,7 @@
         shufflePlaylist();
         playNextSong();
  
-        nowPlayingDiv.style.display = 'block';
+        nowPlayingDiv.style.display = 'flex';
         muteBtn.style.display = 'flex';
 
         setTimeout(() => box.classList.add('fade-out'), 1500);
