@@ -52,21 +52,38 @@
         pointer-events: auto; 
         transition: 0.3s ease;
         user-select: none;
+        max-width: calc(100% - 80px); 
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    #song-name {
+        display: inline-block;
+        padding-left: 20px;
     }
 
     #now-playing:hover {
-    background: rgba(0, 0, 0, 0.6);
-    transform: scale(1.05);
+        background: rgba(0, 0, 0, 0.6);
+        transform: scale(1.05);
     }   
 
+    .marquee {
+        animation: marquee 8s linear infinite;
+    }
+
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
     #mute-btn {
-    position: fixed; top: 15px; right: 15px; z-index: 1000;
-    background: rgba(0, 0, 0, 0.5); color: white;
-    width: 40px; height: 40px; border-radius: 50%;
-    display: none; justify-content: center; align-items: center;
-    cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    transition: all 0.3s;
+        position: fixed; top: 15px; right: 15px; z-index: 1001;
+        background: rgba(0, 0, 0, 0.5); color: white;
+        width: 38px; height: 38px; border-radius: 50%;
+        display: none; justify-content: center; align-items: center;
+        cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s;
     }
 
     #mute-btn:hover { transform: scale(1.1); background: rgba(0, 0, 0, 0.7); }
@@ -133,17 +150,29 @@
 
     /*THIỆP CHÚC*/
     #overlay {
-        position: fixed; inset: 0; background: rgba(20, 5, 30, 0.95);
+        position: fixed; inset: 0; background: rgba(20, 5, 30, 0.8);
         display: none; justify-content: center; align-items: center;
-        z-index: 1000; opacity: 0; transition: opacity 0.8s ease;
-        backdrop-filter: blur(15px);
+        z-index: 2000; opacity: 0; transition: opacity 0.8s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
     #overlay.active { opacity: 1; display: flex; }
     .card-content { 
-        color: white; text-align: center; padding: 40px;
-        max-width: 650px; width: 90%; transform: scale(0.5); opacity: 0;
+        color: white; text-align: center; padding: 30px;
+        max-width: 550px; width: 90%; transform: scale(0.5); opacity: 0;
         transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background: rgba(255, 255, 255, 0.05); border-radius: 20px;
+        border: 1px solid rgba(118, 222, 66, 0.3);
     }
+
+    .tap-to-close {
+        margin-top: 25px;
+        font-size: 0.9rem;
+        color: #76DE42;
+        opacity: 0.8;
+        font-style: italic;
+    }
+    
     #overlay.active .card-content { transform: scale(1); opacity: 1; }
 
     @media(max-width: 600px) {
@@ -182,6 +211,7 @@
         line-height: 1.6;
         margin-bottom: 10px;
         color: #f0f0f0;
+        white-space: pre-line;
     }
 
     .sender-name {
@@ -202,6 +232,28 @@
     .gold-glow {
         filter: drop-shadow(0 0 10px rgb(255, 238, 142)) brightness(1.0);
     }
+
+    #clear-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(194, 194, 194, 0.2);
+        color: #2D0341;
+        border: 1px solid #2D0341;
+        padding: 8px 15px;
+        border-radius: 15px;
+        cursor: pointer;
+        display: none; 
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    #clear-btn:hover {
+        background: #3b0455;
+        color: #ffffff;
+    }
+
 </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -228,11 +280,12 @@
 </div>
 
 <div id="overlay" onclick="closeCard()">
-    <div class="card-content" onclick="event.stopPropagation()"> <h1 style="color: #76DE42; font-size: 2.2rem; margin-bottom: 10px;">Happy Birthday</h1>
+    <div class="card-content" onclick="event.stopPropagation()"> 
+        <h1 style="color: #76DE42; font-size: 2.2rem; margin-bottom: 10px;">Happy Birthday</h1>
         
         <div class="wishes-container">
             <div class="wish-box">
-                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/ương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết &gt;&lt;</div>
+                <div class="wish-text">Chúc mừng sinh nhật Puri/Ria/Păn/Pưn/Phương/Naphuong/Naph/PAN/ Pương/Mèo/Fel/P whatever. Chúc cậu luôn tuyệt vời và ngày càng tuyệt vời hơn nhé, người mồ côi cha mạnh nhất mình biết &gt;&lt;</div>
                 <span class="sender-name">— thồn lành</span>
             </div>
 
@@ -273,22 +326,24 @@
 
             <div class="wish-box">
                 <div class="wish-text">Mừng em sinh nhật vui vẻ nha 🥺 Cỏ mới biết nhiều về em hơn cách đây không lâu dù mình add từ tám hoánh rồi, nhưng thiệt sự cỏ rất mừng vì em đã nch với cỏ á. Dù chỉ mới quen thân hơn được 1 khoảng ngắn nhưng cỏ nhận ra được em là một người vô cùng hoạt bát, em cũng rất hay trong việc chủ động tìm kiếm bạn bè và làm thân, và cũng là 1 người bạn siêu dễ thương luôn...bằng chứng dễ thấy nhất là việc em dễ thương như nào thì bạn em sẽ như thế, tại nếu đó k phải sự thật thì em cũng không nhận được lời nhắn này đâu á. Trừ việc đó thì qua quá trình nói chuyện với em thì cỏ cũng thấy được sự nhiệt huyết của em, cỏ cũng siêu ngưỡng mộ cái này...Mong em không bao giờ mất đi ngọn lửa đó nè.
+                    
                     Chúc em mọi ngày đều thiệt thiệt tuyệt vời, và cứ ngước đầu nhìn trời tiếp đi em.  </div>
                 <span class="sender-name">— Cỏ</span>
             </div>
 
-           <div class="wish-box">
+            <div class="wish-box">
                 <div class="wish-text">Hello em, Chúc mừng sinh nhật vui vẻ nhé. Tao thì không có vòng vo, vô thẳng luôn, tao chúc mày tuổi mới tràn đầy niềm vui, và cuộc sống cũng nhẹ nhàng với mày hơn. Mày là người tốt P ạ, chỉ là mày không thấy rõ việc đó cho lắm, mà người tốt thì xứng đáng được có kết cục tốt đẹp mà? Chúc mày tìm được bến đỗ tinh thần, người cho mày tình yêu như mày trao cho họ, chứ tao thấy mày cần lắm rồi đấy cục cưng. Tao nghĩ mày xứng đáng với điều đó mà, nhất là khi mày ở đó cho mọi người. À, chúc mày có nhiều tiền nữa nhé để trả nợ cho tbm (đùa th) (chắc v) vì mày có năng lực mà, cố lên, rồi một ngày nhận comm Vgen 5 củ, hì hì.
-                   Chúc em vui vẻ nhé, iu e</div>
+
+                    Chúc em vui vẻ nhé, iu e</div>
                 <span class="sender-name">— Tuộc</span>
             </div>
 
         </div>
 
-        <button onclick="closeCard()" style="margin-top:20px; padding: 10px 25px; border-radius: 20px; border:none; background: #76DE42; font-weight:bold; cursor:pointer;">Đóng thiệp</button>
+            <div class="tap-to-close" onclick="closeCard()">(Tap anywhere else to close)</div>    
     </div>
 </div>
-
+<button id="clear-btn" onclick="clearEnsures(event)">Nuốt hết Ensure</button>
 <div id="mute-btn" onclick="toggleMute(event)">🔊</div>
 <audio id="ensure-sound" src="click_sound.mp3"></audio> 
 <audio id="music"></audio>
@@ -309,6 +364,7 @@
         const music = document.getElementById('music');
         const muteBtn = document.getElementById('mute-btn');
         const nowPlayingDiv = document.getElementById('now-playing');
+        const nameEl = document.getElementById('song-name');
 
         function shufflePlaylist() {
             let newShuffle;
@@ -320,15 +376,25 @@
 
         function playNextSong() {
             if (currentPlaylist.length === 0) return;
-
             if (currentSongIndex >= currentPlaylist.length) {
                 currentSongIndex = 0;
                 shufflePlaylist();
             }
             const song = currentPlaylist[currentSongIndex];
-            lastPlayedSrc = song.src; // Cập nhật bài vừa chơi
+            lastPlayedSrc = song.src;
             music.src = song.src;
+            music.volume = 0.1627;
             document.getElementById('song-name').innerText = song.name;
+            
+            nameEl.innerText = song.name;
+            nameEl.classList.remove('marquee');
+            setTimeout(() => {
+                if (nameEl.offsetWidth > (nowPlayingDiv.offsetWidth - 30)) {
+                    nameEl.innerText = song.name + "   |   " + song.name + "   |   ";
+                    nameEl.classList.add('marquee');
+                }
+            }, 100);
+
             music.play().catch(() => {});
             currentSongIndex++;
         }
@@ -355,6 +421,7 @@
     let isCardOpen = false;
     let exitLock = false;
     let isBoxOpened = false;
+    
     function openBox(e) {
         if (isBoxOpened) return;
         e.stopPropagation();
@@ -377,8 +444,14 @@
         setTimeout(() => box.style.display = "none", 3000);
     }
 
+    let ensureCount = 0;
+
     function spawnEnsure(e) {
         e.stopPropagation();
+        ensureCount++;
+        if (ensureCount % 10 === 0 && ensureCount > 0) {
+            document.getElementById('clear-btn').style.display = 'block';
+        }
         const sound = document.getElementById('ensure-sound');
         sound.currentTime = 0; 
         sound.play();
@@ -427,6 +500,14 @@
         document.body.appendChild(img);
     }
 
+    function clearEnsures(e) {
+        if (e) e.stopPropagation();
+        const ensures = document.querySelectorAll('.spawned-ensure');
+        ensures.forEach(el => el.remove());
+        ensureCount = 0;
+        document.getElementById('clear-btn').style.display = 'none';
+    }
+
     function lightCandle(e) {
         e.stopPropagation();
         document.body.classList.add('dark-mode');
@@ -457,5 +538,3 @@
 </script>
 </body>
 </html>
-
-
